@@ -1,0 +1,7 @@
+CREATE TABLE articles (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL,
+    image_url VARCHAR(2083),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
