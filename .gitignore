@@ -1,0 +1,20 @@
+# 環境変数
+.env
+
+# Go ビルド成果物
+*.exe
+*.out
+*.test
+
+# キャッシュと一時ファイル
+*.log
+*.swp
+*.swo
+*.bak
+*~
+
+# Docker 関連
+volumes/
+pgdata/
+data/
+
