@@ -12,7 +12,7 @@ import (
 // 記事を取得する処理
 func GetArticles(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		rows, err := db.Query("SELECT id, title, content, image_url, created_at FROM articles")
+		rows, err := db.Query("SELECT id, title, content, image_url, created_at updated_at FROM articles")
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
