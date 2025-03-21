@@ -29,5 +29,5 @@ func main() {
 
 	// サーバー起動
 	log.Println("Server running on port 8080")
-	log.Fatal(http.ListenAndServe(":8080", corsOptions(router)))
+	log.Fatal(http.ListenAndServe("0.0.0.0:8080", corsOptions(router)))
 }
