@@ -5,6 +5,8 @@ import (
 	"kawa_blog/routes"
 	"log"
 	"net/http"
+
+	"github.com/gorilla/handlers"
 )
 
 func main() {
@@ -18,7 +20,14 @@ func main() {
 	// ルーター設定
 	router := routes.NewRouter(database)
 
+	// CORSの設定を適用
+	corsOptions := handlers.CORS(
+		handlers.AllowedOrigins([]string{"http://localhost:3000"}),                   // 許可するオリジン
+		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}), // 許可するHTTPメソッド
+		handlers.AllowedHeaders([]string{"Content-Type", "Authorization"}),           // 許可するヘッダー
+	)
+
 	// サーバー起動
 	log.Println("Server running on port 8080")
-	log.Fatal(http.ListenAndServe(":8080", router))
+	log.Fatal(http.ListenAndServe(":8080", corsOptions(router)))
 }
