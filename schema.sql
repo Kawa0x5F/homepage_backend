@@ -1,11 +1,15 @@
 CREATE TABLE articles (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
+    slug VARCHAR(255) NOT NULL UNIQUE,
     content TEXT NOT NULL,
     image_url VARCHAR(2083),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE INDEX idx_articles_slug ON articles(slug);
+
 
 CREATE TABLE tags (
     id SERIAL PRIMARY KEY,
