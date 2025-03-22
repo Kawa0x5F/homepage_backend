@@ -84,3 +84,33 @@ func CreateArticle(db *sql.DB) http.HandlerFunc {
 		json.NewEncoder(w).Encode(article)
 	}
 }
+
+// 記事を削除する処理
+func DeleteArticle(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// ルートパラメータを取得
+		vars := mux.Vars(r)
+		target_slug := vars["slug"]
+
+		result, err := db.Exec("DELETE FROM articles WHERE slug = $1", target_slug)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		// 削除された行数を確認
+		rowsAffected, err := result.RowsAffected()
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		if rowsAffected == 0 {
+			http.Error(w, "Article not found", http.StatusNotFound)
+			return
+		}
+
+		// JSON を返す
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]string{"message": "Article deleted"})
+	}
+}
