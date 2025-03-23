@@ -19,3 +19,7 @@ func LoadEnv() {
 func GetEnv(key string) string {
 	return os.Getenv(key)
 }
+
+func GetSecretKey() string {
+	return os.Getenv("SECRET_KEY")
+}

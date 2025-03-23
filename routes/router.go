@@ -17,5 +17,8 @@ func NewRouter(db *sql.DB) *mux.Router {
 	r.HandleFunc("/tags", handlers.CreateTag(db)).Methods("POST")
 
 	r.HandleFunc("/login", handlers.LoginHandler()).Methods("POST")
+	r.HandleFunc("/logout", handlers.LogoutHandler()).Methods("POST")
+	r.HandleFunc("/auth/check", handlers.AuthCheckHandler()).Methods("GET")
+
 	return r
 }

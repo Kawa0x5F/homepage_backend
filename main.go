@@ -30,6 +30,7 @@ func main() {
 		handlers.AllowedOrigins([]string{"http://localhost:3000"}),                   // 許可するオリジン
 		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}), // 許可するHTTPメソッド
 		handlers.AllowedHeaders([]string{"Content-Type", "Authorization"}),           // 許可するヘッダー
+		handlers.AllowCredentials(),
 	)
 
 	// サーバー起動
