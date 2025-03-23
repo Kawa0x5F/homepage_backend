@@ -30,7 +30,7 @@ func GetAllArticles(db *sql.DB) ([]models.Article, error) {
 }
 
 // 公開されている記事の一覧をデータベースから取得する
-func GetPublicArticles(db *sql.DB) ([]models.Article, error) {
+func GetPublishArticles(db *sql.DB) ([]models.Article, error) {
 	rows, err := db.Query("SELECT id, title, slug, image_url, updated_at FROM articles WHERE is_publish = TRUE")
 	if err != nil {
 		return nil, err
@@ -53,13 +53,15 @@ func GetPublicArticles(db *sql.DB) ([]models.Article, error) {
 // 特定の記事をデータベースから取得する
 func GetArticleBySlug(db *sql.DB, slug string) (*models.Article, error) {
 	var article models.Article
-	err := db.QueryRow("SELECT id, title, content, image_url, is_public, created_at, updated_at FROM articles WHERE slug = $1", slug).
-		Scan(&article.ID, &article.Title, &article.Content, &article.ImageURL, &article.CreatedAt, &article.UpdatedAt)
+	err := db.QueryRow("SELECT id, title, content, image_url, is_publish, created_at, updated_at FROM articles WHERE slug = $1", slug).
+		Scan(&article.ID, &article.Title, &article.Content, &article.ImageURL, &article.IsPublish, &article.CreatedAt, &article.UpdatedAt)
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
+			log.Println("記事が見つかりません")
 			return nil, nil
 		}
+		log.Println(err)
 		return nil, err
 	}
 	return &article, nil

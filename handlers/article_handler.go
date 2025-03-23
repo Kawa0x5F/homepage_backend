@@ -30,7 +30,7 @@ func CreateArticle(db *sql.DB) http.HandlerFunc {
 }
 
 // 記事一覧を取得
-func GetArticles(db *sql.DB) http.HandlerFunc {
+func GetAllArticles(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		articles, err := database.GetAllArticles(db)
 		if err != nil {
@@ -42,9 +42,9 @@ func GetArticles(db *sql.DB) http.HandlerFunc {
 }
 
 // 公開記事一覧を取得
-func GetPublicArticles(db *sql.DB) http.HandlerFunc {
+func GetPublishArticles(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		articles, err := database.GetPublicArticles(db)
+		articles, err := database.GetPublishArticles(db)
 		if err != nil {
 			respondWithError(w, http.StatusInternalServerError, "データベースエラー")
 			return
