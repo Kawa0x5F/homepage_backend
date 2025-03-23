@@ -6,10 +6,15 @@ import (
 	"log"
 	"net/http"
 
+	"kawa_blog/utils"
+
 	"github.com/gorilla/handlers"
 )
 
 func main() {
+	// 環境変数を読み込む
+	utils.LoadEnv()
+
 	// DB接続
 	database, err := database.InitDB()
 	if err != nil {
