@@ -4,7 +4,7 @@ CREATE TABLE articles (
     slug VARCHAR(255) NOT NULL UNIQUE,
     content TEXT NOT NULL,
     image_url VARCHAR(2083),
-    is_public BOOLEAN DEFAULT FALSE,
+    is_publish BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

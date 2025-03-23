@@ -10,7 +10,7 @@ import (
 
 // 記事の一覧をデータベースから取得する
 func GetAllArticles(db *sql.DB) ([]models.Article, error) {
-	rows, err := db.Query("SELECT id, title, slug, image_url, is_public,updated_at FROM articles")
+	rows, err := db.Query("SELECT id, title, slug, image_url, is_publish, updated_at FROM articles")
 	if err != nil {
 		return nil, err
 	}
@@ -19,7 +19,7 @@ func GetAllArticles(db *sql.DB) ([]models.Article, error) {
 	var articles []models.Article
 	for rows.Next() {
 		var article models.Article
-		err := rows.Scan(&article.ID, &article.Title, &article.Slug, &article.ImageURL, &article.IsPublic, &article.UpdatedAt)
+		err := rows.Scan(&article.ID, &article.Title, &article.Slug, &article.ImageURL, &article.IsPublish, &article.UpdatedAt)
 		if err != nil {
 			return nil, err
 		}
@@ -31,7 +31,7 @@ func GetAllArticles(db *sql.DB) ([]models.Article, error) {
 
 // 公開されている記事の一覧をデータベースから取得する
 func GetPublicArticles(db *sql.DB) ([]models.Article, error) {
-	rows, err := db.Query("SELECT id, title, slug, image_url, is_public, updated_at FROM articles WHERE is_public = TRUE")
+	rows, err := db.Query("SELECT id, title, slug, image_url, updated_at FROM articles WHERE is_publish = TRUE")
 	if err != nil {
 		return nil, err
 	}
@@ -40,7 +40,7 @@ func GetPublicArticles(db *sql.DB) ([]models.Article, error) {
 	var articles []models.Article
 	for rows.Next() {
 		var article models.Article
-		err := rows.Scan(&article.ID, &article.Title, &article.Slug, &article.ImageURL, &article.IsPublic, &article.UpdatedAt)
+		err := rows.Scan(&article.ID, &article.Title, &article.Slug, &article.ImageURL, &article.UpdatedAt)
 		if err != nil {
 			return nil, err
 		}
@@ -67,10 +67,10 @@ func GetArticleBySlug(db *sql.DB, slug string) (*models.Article, error) {
 
 // 記事をデータベースに追加
 func InsertArticle(db *sql.DB, article *models.Article) error {
-	query := `INSERT INTO articles (title, slug, content, image_url, is_public) VALUES ($1, $2, $3, $4, $5) RETURNING id, created_at, updated_at`
+	query := `INSERT INTO articles (title, slug, content, image_url, is_publish) VALUES ($1, $2, $3, $4, $5) RETURNING id, created_at, updated_at`
 
 	// クエリ実行
-	err := db.QueryRow(query, article.Title, article.Slug, article.Content, article.ImageURL, article.IsPublic).Scan(&article.ID, &article.CreatedAt, &article.UpdatedAt)
+	err := db.QueryRow(query, article.Title, article.Slug, article.Content, article.ImageURL, article.IsPublish).Scan(&article.ID, &article.CreatedAt, &article.UpdatedAt)
 	if err != nil {
 		// `slug` の重複エラーかどうかを判定
 		if err.Error() == `pq: duplicate key value violates unique constraint "articles_slug_key"` {
