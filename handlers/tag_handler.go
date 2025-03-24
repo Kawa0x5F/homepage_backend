@@ -10,24 +10,12 @@ import (
 )
 
 // タグを取得する処理
-func GetTags(db *sql.DB) http.HandlerFunc {
+func GetALLTags(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		rows, err := db.Query("SELECT id, name FROM tags")
+		tags, err := database.GetAllTags(db)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			writeJSONResponse(w, http.StatusInternalServerError, ErrorResponse{Error: "データベースエラー"})
 			return
-		}
-		defer rows.Close()
-
-		var tags []models.Tag
-		for rows.Next() {
-			var tag models.Tag
-			err := rows.Scan(&tag.ID, &tag.Name)
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-			tags = append(tags, tag)
 		}
 
 		w.Header().Set("Content-Type", "application/json")
@@ -42,13 +30,13 @@ func CreateTag(db *sql.DB) http.HandlerFunc {
 
 		// JSON をデコード
 		if err := json.NewDecoder(r.Body).Decode(&tag); err != nil {
-			http.Error(w, "無効なリクエスト", http.StatusBadRequest)
+			writeJSONResponse(w, http.StatusBadRequest, ErrorResponse{Error: "Invalid request body"})
 			return
 		}
 
 		// タグをデータベースに保存
 		if err := database.InsertTag(db, &tag); err != nil {
-			http.Error(w, "データベースエラー", http.StatusInternalServerError)
+			writeJSONResponse(w, http.StatusInternalServerError, ErrorResponse{Error: "データベースエラー"})
 			return
 		}
 
