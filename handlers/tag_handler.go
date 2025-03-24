@@ -79,7 +79,7 @@ func InsertArticleTags(db *sql.DB) http.HandlerFunc {
 	}
 }
 
-// 記事と紐づいたタグを追加するハンドラー
+// 記事と紐づいたタグを更新するハンドラー
 func UpdateArticleTags(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
