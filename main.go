@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 
+	"kawa_blog/client"
 	"kawa_blog/utils"
 
 	"github.com/gorilla/handlers"
@@ -14,6 +15,11 @@ import (
 func main() {
 	// 環境変数を読み込む
 	utils.LoadEnv()
+
+	// Cloudflare R2 の S3 クライアントを初期化
+	if err := client.InitS3Client(); err != nil {
+		log.Fatalf("Failed to initialize S3 client: %v", err)
+	}
 
 	// DB接続
 	database, err := database.InitDB()
