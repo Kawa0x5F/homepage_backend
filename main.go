@@ -27,9 +27,9 @@ func main() {
 
 	// CORSの設定を適用
 	corsOptions := handlers.CORS(
-		handlers.AllowedOrigins([]string{"http://localhost:3000"}),                   // 許可するオリジン
-		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}), // 許可するHTTPメソッド
-		handlers.AllowedHeaders([]string{"Content-Type", "Authorization"}),           // 許可するヘッダー
+		handlers.AllowedOrigins([]string{"http://localhost:3000"}),                            // 許可するオリジン
+		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"}), // 許可するHTTPメソッド
+		handlers.AllowedHeaders([]string{"Content-Type", "Authorization"}),                    // 許可するヘッダー
 		handlers.AllowCredentials(),
 	)
 

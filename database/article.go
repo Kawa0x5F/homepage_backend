@@ -85,6 +85,31 @@ func InsertArticle(db *sql.DB, article *models.Article) error {
 	return nil
 }
 
+// 記事を更新する
+func PatchArticle(db *sql.DB, slug string, title string, content string, image_url string, is_publish bool) (bool, error) {
+	query := `UPDATE articles SET title = $1, content = $2, image_url = $3, is_publish = $4, updated_at = NOW() WHERE slug = $5`
+	result, err := db.Exec(query, title, content, image_url, is_publish, slug)
+
+	if err != nil {
+		log.Println("記事の更新に失敗しました:", err)
+		return false, err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		log.Println("更新結果の取得に失敗しました:", err)
+		return false, err
+	}
+
+	if rowsAffected == 0 {
+		log.Println("更新対象の記事が見つかりません:", slug)
+		return false, nil
+	}
+
+	log.Println("記事が更新されました:", slug)
+	return true, nil
+}
+
 // 記事をデータベースから削除
 func DeleteArticleBySlug(db *sql.DB, slug string) (bool, error) {
 	result, err := db.Exec("DELETE FROM articles WHERE slug = $1", slug)

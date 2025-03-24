@@ -3,6 +3,7 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"kawa_blog/database"
@@ -10,6 +11,14 @@ import (
 
 	"github.com/gorilla/mux"
 )
+
+// 記事更新用のリクエストボディ用構造体
+type UpdateArticleRequest struct {
+	Title     string `json:"title"`
+	Content   string `json:"content"`
+	ImageURL  string `json:"image_url"`
+	IsPublish bool   `json:"is_publish"`
+}
 
 // 記事を作成する
 func CreateArticle(db *sql.DB) http.HandlerFunc {
@@ -26,6 +35,45 @@ func CreateArticle(db *sql.DB) http.HandlerFunc {
 		}
 
 		respondWithJSON(w, http.StatusCreated, article)
+	}
+}
+
+// 記事を更新する
+func PatchArticle(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		slug := vars["slug"]
+		if slug == "" {
+			respondWithError(w, http.StatusBadRequest, "Slugが指定されていません")
+			return
+		}
+
+		var req UpdateArticleRequest
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			log.Println("JSONデコードエラー:", err)
+			respondWithError(w, http.StatusBadRequest, "無効なリクエスト: JSONの形式が正しくありません")
+			return
+		}
+
+		// タイトルまたは内容が空でないかチェック
+		if req.Title == "" || req.Content == "" {
+			respondWithError(w, http.StatusBadRequest, "タイトルまたは内容が空です")
+			return
+		}
+
+		// データベースを更新
+		updated, err := database.PatchArticle(db, slug, req.Title, req.Content, req.ImageURL, req.IsPublish)
+		if err != nil {
+			respondWithError(w, http.StatusInternalServerError, "データベースエラー")
+			return
+		}
+
+		if !updated {
+			respondWithError(w, http.StatusNotFound, "Article not found")
+			return
+		}
+
+		respondWithJSON(w, http.StatusOK, map[string]string{"message": "Article update"})
 	}
 }
 
@@ -58,6 +106,10 @@ func GetArticle(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		slug := vars["slug"]
+		if slug == "" {
+			respondWithError(w, http.StatusBadRequest, "Slugが指定されていません")
+			return
+		}
 
 		article, err := database.GetArticleBySlug(db, slug)
 		if err != nil {
@@ -77,6 +129,10 @@ func DeleteArticle(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		slug := vars["slug"]
+		if slug == "" {
+			respondWithError(w, http.StatusBadRequest, "Slugが指定されていません")
+			return
+		}
 
 		deleted, err := database.DeleteArticleBySlug(db, slug)
 		if err != nil {
