@@ -35,17 +35,17 @@ func GetAllArticles(db *sql.DB) ([]models.ArticleWithTag, error) {
 		articleMap[article.ID] = &articles[len(articles)-1]
 	}
 
-	articleIDs := make([]int, len(articles))
-	for i, article := range articles {
-		articleIDs[i] = article.ID
-	}
-
 	tagQuery := `
 	SELECT at.article_id, t.id, t.name
 	FROM articles_tags at
 	JOIN tags t ON at.tag_id = t.id
 	WHERE at.article_id = ANY($1)
 	`
+	articleIDs := make([]int, len(articles))
+	for i, article := range articles {
+		articleIDs[i] = article.ID
+	}
+
 	tagRows, err := db.Query(tagQuery, pq.Array(articleIDs))
 	if err != nil {
 		return nil, err
@@ -98,7 +98,7 @@ func GetPublishArticles(db *sql.DB) ([]models.ArticleWithTag, error) {
 	SELECT at.article_id, t.id, t.name
 	FROM articles_tags at
 	JOIN tags t ON at.tag_id = t.id
-	WHERE at.articles_id = ANY($1)
+	WHERE at.article_id = ANY($1)
 	`
 	articleIDs := make([]int, len(articles))
 	for i, article := range articles {
