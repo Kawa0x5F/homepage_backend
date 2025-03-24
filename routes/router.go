@@ -15,8 +15,11 @@ func NewRouter(db *sql.DB) *mux.Router {
 	r.HandleFunc("/article/{slug}", handlers.GetArticle(db)).Methods("GET")
 	r.HandleFunc("/article/{slug}", handlers.PatchArticle(db)).Methods("PATCH")
 	r.HandleFunc("/article/{slug}", handlers.DeleteArticle(db)).Methods("DELETE")
+
 	r.HandleFunc("/tags/all", handlers.GetALLTags(db)).Methods("GET")
 	r.HandleFunc("/tags", handlers.CreateTag(db)).Methods("POST")
+	r.HandleFunc("/tags/article", handlers.InsertArticleTags(db)).Methods("POST")
+	r.HandleFunc("/tags/article/{slug}", handlers.UpdateArticleTags(db)).Methods("PATCH")
 
 	r.HandleFunc("/login", handlers.LoginHandler()).Methods("POST")
 	r.HandleFunc("/logout", handlers.LogoutHandler()).Methods("POST")

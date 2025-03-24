@@ -12,14 +12,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// 記事更新用のリクエストボディ用構造体
-type UpdateArticleRequest struct {
-	Title     string `json:"title"`
-	Content   string `json:"content"`
-	ImageURL  string `json:"image_url"`
-	IsPublish bool   `json:"is_publish"`
-}
-
 // 記事を作成する
 func CreateArticle(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -48,7 +40,7 @@ func PatchArticle(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		var req UpdateArticleRequest
+		var req models.UpdateArticleRequest
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			log.Println("JSONデコードエラー:", err)
 			respondWithError(w, http.StatusBadRequest, "無効なリクエスト: JSONの形式が正しくありません")
@@ -62,7 +54,7 @@ func PatchArticle(db *sql.DB) http.HandlerFunc {
 		}
 
 		// データベースを更新
-		updated, err := database.PatchArticle(db, slug, req.Title, req.Content, req.ImageURL, req.IsPublish)
+		updated, err := database.PatchArticle(db, slug, req)
 		if err != nil {
 			respondWithError(w, http.StatusInternalServerError, "データベースエラー")
 			return

@@ -42,3 +42,96 @@ func GetAllTags(db *sql.DB) ([]models.Tag, error) {
 
 	return tags, nil
 }
+
+// 新規記事のタグ情報を追加する関数
+func InsertArticleTags(db *sql.DB, slug string, tags models.TagRequest) error {
+	tx, err := db.Begin()
+	if err != nil {
+		return err
+	}
+
+	var articleID int
+	err = tx.QueryRow("SELECT id FROM articles WHERE slug = $1", slug).Scan(&articleID)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	for _, tag := range tags.Tags {
+		var tagID int
+		query := `
+		INSERT INTO tags (name) VALUES ($1)
+		ON CONFLICT (name) DO NOTHING
+		RETURNING id
+		`
+		err = tx.QueryRow(query, tag).Scan(&tagID)
+
+		if err == sql.ErrNoRows || tagID == 0 {
+			query = `SELECT id FROM tags WHERE name = $1`
+			err = tx.QueryRow(query, tag).Scan(&tagID)
+			if err != nil {
+				tx.Rollback()
+				return err
+			}
+		}
+
+		query = `
+		INSERT INTO articles_tags (article_id, tag_id) VALUES ($1, $2)
+		`
+		_, err = tx.Exec(query, articleID, tagID)
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
+
+	return tx.Commit()
+}
+
+// 記事のタグ情報を更新する関数
+func UpdateArticleTags(db *sql.DB, slug string, tags models.TagRequest) error {
+	tx, err := db.Begin()
+	if err != nil {
+		return err
+	}
+
+	var articleID int
+	err = tx.QueryRow("SELECT id FROM articles WHERE slug = $1", slug).Scan(&articleID)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	_, err = tx.Exec("DELETE FROM articles_tags WHERE article_id = $1", articleID)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	for _, tag := range tags.Tags {
+		var tagID int
+		query := `
+		INSERT INTO tags (name) VALUES ($1)
+		ON CONFLICT (name) DO NOTHING
+		RETURNING id
+		`
+		err = tx.QueryRow(query, tag).Scan(&tagID)
+
+		if err == sql.ErrNoRows || tagID == 0 {
+			query = `SELECT id FROM tags WHERE name = $1`
+			err = tx.QueryRow(query, tag).Scan(&tagID)
+			if err != nil {
+				tx.Rollback()
+				return err
+			}
+		}
+
+		_, err = tx.Exec("INSERT INTO articles_tags (article_id, tag_id) VALUES ($1, $2)", articleID, tagID)
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
+
+	return tx.Commit()
+}

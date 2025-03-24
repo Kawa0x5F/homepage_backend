@@ -7,3 +7,7 @@ type Tag struct {
 	Name      string    `json:"tag_name"`
 	CreatedAt time.Time `json:"date"`
 }
+
+type TagRequest struct {
+	Tags []string `json:"tags"`
+}
