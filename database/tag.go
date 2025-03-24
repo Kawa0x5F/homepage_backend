@@ -61,18 +61,14 @@ func InsertArticleTags(db *sql.DB, slug string, tags models.TagRequest) error {
 		var tagID int
 		query := `
 		INSERT INTO tags (name) VALUES ($1)
-		ON CONFLICT (name) DO NOTHING
+		ON CONFLICT (name)
+		DO UPDATE SET name = EXCLUDED.name
 		RETURNING id
 		`
 		err = tx.QueryRow(query, tag).Scan(&tagID)
-
-		if err == sql.ErrNoRows || tagID == 0 {
-			query = `SELECT id FROM tags WHERE name = $1`
-			err = tx.QueryRow(query, tag).Scan(&tagID)
-			if err != nil {
-				tx.Rollback()
-				return err
-			}
+		if err != nil {
+			tx.Rollback()
+			return err
 		}
 
 		query = `
@@ -85,7 +81,12 @@ func InsertArticleTags(db *sql.DB, slug string, tags models.TagRequest) error {
 		}
 	}
 
-	return tx.Commit()
+	err = tx.Commit()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // 記事のタグ情報を更新する関数
@@ -102,45 +103,24 @@ func UpdateArticleTags(db *sql.DB, slug string, tags models.TagRequest) error {
 		return err
 	}
 
-	// 現在のタグを取得
-	rows, err := tx.Query("SELECT t.name FROM tags t JOIN articles_tags at ON t.id = at.tag_id WHERE at.article_id = $1", articleID)
+	_, err = tx.Exec("DELETE FROM articles_tags WHERE article_id = $1", articleID)
 	if err != nil {
 		tx.Rollback()
 		return err
 	}
-	defer rows.Close()
 
-	existingTags := make(map[string]bool)
-	for rows.Next() {
-		var tagName string
-		if err := rows.Scan(&tagName); err != nil {
-			tx.Rollback()
-			return err
-		}
-		existingTags[tagName] = true
-	}
-
-	// 新しく追加するタグ
 	for _, tag := range tags.Tags {
-		if existingTags[tag] {
-			continue // 既に存在するタグはスキップ
-		}
-
 		var tagID int
 		query := `
 		INSERT INTO tags (name) VALUES ($1)
-		ON CONFLICT (name) DO NOTHING
+		ON CONFLICT (name)
+		DO UPDATE SET name = EXCLUDED.name
 		RETURNING id
 		`
 		err = tx.QueryRow(query, tag).Scan(&tagID)
-
-		if err == sql.ErrNoRows || tagID == 0 {
-			query = `SELECT id FROM tags WHERE name = $1`
-			err = tx.QueryRow(query, tag).Scan(&tagID)
-			if err != nil {
-				tx.Rollback()
-				return err
-			}
+		if err != nil {
+			tx.Rollback()
+			return err
 		}
 
 		_, err = tx.Exec("INSERT INTO articles_tags (article_id, tag_id) VALUES ($1, $2)", articleID, tagID)
@@ -150,26 +130,10 @@ func UpdateArticleTags(db *sql.DB, slug string, tags models.TagRequest) error {
 		}
 	}
 
-	// 削除するタグ
-	for existingTag := range existingTags {
-		found := false
-		for _, tag := range tags.Tags {
-			if existingTag == tag {
-				found = true
-				break
-			}
-		}
-		if !found {
-			_, err = tx.Exec(`
-				DELETE FROM articles_tags 
-				WHERE article_id = $1 AND tag_id = (SELECT id FROM tags WHERE name = $2)
-			`, articleID, existingTag)
-			if err != nil {
-				tx.Rollback()
-				return err
-			}
-		}
+	err = tx.Commit()
+	if err != nil {
+		return err
 	}
 
-	return tx.Commit()
+	return nil
 }

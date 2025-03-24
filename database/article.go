@@ -22,17 +22,24 @@ func GetAllArticles(db *sql.DB) ([]models.ArticleWithTag, error) {
 	}
 	defer rows.Close()
 
-	var articles []models.ArticleWithTag
+	var articles []*models.ArticleWithTag
 	articleMap := make(map[int]*models.ArticleWithTag)
+	var articleIDs []int
 
 	for rows.Next() {
-		var article models.ArticleWithTag
+		article := new(models.ArticleWithTag)
 		err := rows.Scan(&article.ID, &article.Title, &article.Slug, &article.ImageURL, &article.IsPublish, &article.CreatedAt, &article.UpdatedAt)
 		if err != nil {
 			return nil, err
 		}
+
 		articles = append(articles, article)
-		articleMap[article.ID] = &articles[len(articles)-1]
+		articleMap[article.ID] = article
+		articleIDs = append(articleIDs, article.ID)
+	}
+
+	if len(articleIDs) == 0 {
+		return []models.ArticleWithTag{}, nil
 	}
 
 	tagQuery := `
@@ -41,10 +48,6 @@ func GetAllArticles(db *sql.DB) ([]models.ArticleWithTag, error) {
 	JOIN tags t ON at.tag_id = t.id
 	WHERE at.article_id = ANY($1)
 	`
-	articleIDs := make([]int, len(articles))
-	for i, article := range articles {
-		articleIDs[i] = article.ID
-	}
 
 	tagRows, err := db.Query(tagQuery, pq.Array(articleIDs))
 	if err != nil {
@@ -65,46 +68,55 @@ func GetAllArticles(db *sql.DB) ([]models.ArticleWithTag, error) {
 		}
 	}
 
-	return articles, nil
+	result := make([]models.ArticleWithTag, len(articles))
+	for i, article := range articles {
+		result[i] = *article
+	}
+
+	return result, nil
 }
 
 // 公開されている記事の一覧をデータベースから取得する
 func GetPublishArticles(db *sql.DB) ([]models.ArticleWithTag, error) {
 	query := `
-	SELECT id, title, slug, image_url, created_at, updated_at
-	FROM articles
-	WHERE is_publish = TRUE
-	`
+    SELECT id, title, slug, image_url, created_at, updated_at
+    FROM articles
+    WHERE is_publish = TRUE
+    `
 	rows, err := db.Query(query)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var articles []models.ArticleWithTag
+	// ポインタのスライスを使用
+	var articles []*models.ArticleWithTag
 	articleMap := make(map[int]*models.ArticleWithTag)
+	var articleIDs []int
 
 	for rows.Next() {
-		var article models.ArticleWithTag
+		// 各記事はヒープに新しく割り当て
+		article := new(models.ArticleWithTag)
 		err := rows.Scan(&article.ID, &article.Title, &article.Slug, &article.ImageURL, &article.CreatedAt, &article.UpdatedAt)
 		if err != nil {
 			return nil, err
 		}
+
 		articles = append(articles, article)
-		articleMap[article.ID] = &articles[len(articles)-1]
+		articleMap[article.ID] = article
+		articleIDs = append(articleIDs, article.ID)
+	}
+
+	if len(articleIDs) == 0 {
+		return []models.ArticleWithTag{}, nil
 	}
 
 	tagQuery := `
-	SELECT at.article_id, t.id, t.name
-	FROM articles_tags at
-	JOIN tags t ON at.tag_id = t.id
-	WHERE at.article_id = ANY($1)
-	`
-	articleIDs := make([]int, len(articles))
-	for i, article := range articles {
-		articleIDs[i] = article.ID
-	}
-
+    SELECT at.article_id, t.id, t.name
+    FROM articles_tags at
+    JOIN tags t ON at.tag_id = t.id
+    WHERE at.article_id = ANY($1)
+    `
 	tagRows, err := db.Query(tagQuery, pq.Array(articleIDs))
 	if err != nil {
 		return nil, err
@@ -124,7 +136,13 @@ func GetPublishArticles(db *sql.DB) ([]models.ArticleWithTag, error) {
 		}
 	}
 
-	return articles, nil
+	// ポインタからデータに変換して返す
+	result := make([]models.ArticleWithTag, len(articles))
+	for i, article := range articles {
+		result[i] = *article
+	}
+
+	return result, nil
 }
 
 // 特定の記事をデータベースから取得する
