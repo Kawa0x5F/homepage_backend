@@ -18,11 +18,11 @@ import (
 func UploadFile(objectKey string, r io.Reader) (string, error) {
 	var bucketName string = utils.GetEnv("R2_BUCKET_NAME")
 	var publicURL string = utils.GetEnv("R2_PUBLIC_URL")
-	var fileName string = uuid.NewString()
 
 	var objectKeyParts []string = strings.Split(objectKey, ".")
 	var ext string = "." + objectKeyParts[len(objectKeyParts)-1]
 	var contentType string = mime.TypeByExtension(ext)
+	var fileName string = uuid.NewString() + ext
 
 	s3Client, err := client.GetS3Client()
 	if err != nil {
