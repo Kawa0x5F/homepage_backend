@@ -42,6 +42,6 @@ func UploadFile(objectKey string, r io.Reader) (string, error) {
 	}
 
 	// Cloudflare R2 の公開 URL を生成
-	imageURL := fmt.Sprintf("%s/%s/%s", publicURL, fileName)
+	imageURL := fmt.Sprintf("%s/%s", publicURL, fileName)
 	return imageURL, nil
 }
