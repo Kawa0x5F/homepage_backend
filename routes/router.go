@@ -26,6 +26,8 @@ func NewRouter(db *sql.DB) *mux.Router {
 	r.HandleFunc("/auth/check", handlers.AuthCheckHandler()).Methods("GET")
 
 	r.HandleFunc("/image", handlers.UploadFile()).Methods("POST")
+	r.HandleFunc("/image", handlers.DeleteFile()).Methods("DELETE")
+	r.HandleFunc("/image", handlers.PatchFile()).Methods("PATCH")
 
 	return r
 }

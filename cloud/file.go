@@ -45,3 +45,23 @@ func UploadFile(objectKey string, r io.Reader) (string, error) {
 	imageURL := fmt.Sprintf("%s/%s", publicURL, fileName)
 	return imageURL, nil
 }
+
+func DeleteFile(objectKey string) error {
+	var bucketName string = utils.GetEnv("R2_BUCKET_NAME")
+
+	s3Client, err := client.GetS3Client()
+	if err != nil {
+		log.Fatalf("S3 client is not initialized: %v", err)
+		return err
+	}
+
+	_, err = s3Client.DeleteObject(context.TODO(), &s3.DeleteObjectInput{
+		Bucket: aws.String(bucketName),
+		Key:    aws.String(objectKey),
+	})
+	if err != nil {
+		log.Fatalf("failed to delete file: %v", err)
+		return err
+	}
+	return nil
+}
