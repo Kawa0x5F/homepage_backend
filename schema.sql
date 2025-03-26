@@ -49,6 +49,7 @@ EXECUTE FUNCTION update_modified_column();
 CREATE TABLE about (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
+    roma VARCHAR(255),
     description TEXT NOT NULL,
     image_url VARCHAR(2083),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
