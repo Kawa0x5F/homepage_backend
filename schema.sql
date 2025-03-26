@@ -50,7 +50,7 @@ CREATE TABLE about (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     roma VARCHAR(255),
-    description TEXT NOT NULL,
+    description TEXT,
     image_url VARCHAR(2083),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -64,7 +64,7 @@ CREATE TABLE skills (
     type VARCHAR(255) NOT NULL,
     description TEXT,
     hasImage BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE contact (
@@ -72,7 +72,7 @@ CREATE TABLE contact (
     name VARCHAR(255) NOT NULL,
     link VARCHAR(2083) NOT NULL,
     hasImage BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TRIGGER trigger_update_about
