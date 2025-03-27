@@ -22,14 +22,16 @@ func main() {
 	}
 
 	// DB接続
-	database, err := database.InitDB()
+	db, err := database.InitDB()
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer database.Close()
+	defer db.Close()
+
+	database.SeedAbout(db)
 
 	// ルーター設定
-	router := routes.NewRouter(database)
+	router := routes.NewRouter(db)
 
 	// CORSの設定を適用
 	corsOptions := handlers.CORS(

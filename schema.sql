@@ -1,3 +1,5 @@
+-- ブログ用のテーブル
+
 CREATE TABLE articles (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
@@ -41,3 +43,40 @@ CREATE TRIGGER trigger_update_articles
 BEFORE UPDATE ON articles
 FOR EACH ROW
 EXECUTE FUNCTION update_modified_column();
+
+-- 自己紹介用のテーブル
+
+CREATE TABLE about (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    roma VARCHAR(255),
+    description TEXT,
+    image_url VARCHAR(2083),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TYPE skill_type AS ENUM ('frontend', 'backend', 'devops', 'design');
+
+CREATE TABLE skills (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    type VARCHAR(255) NOT NULL,
+    description TEXT,
+    hasImage BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE contact (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    link VARCHAR(2083) NOT NULL,
+    hasImage BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TRIGGER trigger_update_about
+BEFORE UPDATE ON about
+FOR EACH ROW
+EXECUTE FUNCTION update_modified_column();
+

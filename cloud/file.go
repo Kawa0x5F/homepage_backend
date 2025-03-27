@@ -12,6 +12,7 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/google/uuid"
 )
 
 func UploadFile(objectKey string, r io.Reader) (string, error) {
@@ -21,6 +22,7 @@ func UploadFile(objectKey string, r io.Reader) (string, error) {
 	var objectKeyParts []string = strings.Split(objectKey, ".")
 	var ext string = "." + objectKeyParts[len(objectKeyParts)-1]
 	var contentType string = mime.TypeByExtension(ext)
+	var fileName string = uuid.NewString() + ext
 
 	s3Client, err := client.GetS3Client()
 	if err != nil {
@@ -30,7 +32,7 @@ func UploadFile(objectKey string, r io.Reader) (string, error) {
 
 	_, err = s3Client.PutObject(context.TODO(), &s3.PutObjectInput{
 		Bucket:      aws.String(bucketName),
-		Key:         aws.String(objectKey),
+		Key:         aws.String(fileName),
 		Body:        r,
 		ContentType: aws.String(contentType),
 	})
@@ -40,6 +42,26 @@ func UploadFile(objectKey string, r io.Reader) (string, error) {
 	}
 
 	// Cloudflare R2 の公開 URL を生成
-	imageURL := fmt.Sprintf("%s/%s/%s", publicURL, bucketName, objectKey)
+	imageURL := fmt.Sprintf("%s/%s", publicURL, fileName)
 	return imageURL, nil
+}
+
+func DeleteFile(objectKey string) error {
+	var bucketName string = utils.GetEnv("R2_BUCKET_NAME")
+
+	s3Client, err := client.GetS3Client()
+	if err != nil {
+		log.Fatalf("S3 client is not initialized: %v", err)
+		return err
+	}
+
+	_, err = s3Client.DeleteObject(context.TODO(), &s3.DeleteObjectInput{
+		Bucket: aws.String(bucketName),
+		Key:    aws.String(objectKey),
+	})
+	if err != nil {
+		log.Fatalf("failed to delete file: %v", err)
+		return err
+	}
+	return nil
 }
