@@ -30,7 +30,8 @@ func NewRouter(db *sql.DB) *mux.Router {
 	r.HandleFunc("/image", handlers.PatchFile()).Methods("PATCH")
 
 	r.HandleFunc("/about", handlers.CreateAbout(db)).Methods("POST")
-	r.HandleFunc("/about/{id:[0-9]+}", handlers.GetAbout(db)).Methods("GET")
+	r.HandleFunc("/about/all", handlers.GetAllAbout(db)).Methods("GET")
+	r.HandleFunc("/about/{id:[0-9]+}", handlers.GetAboutByID(db)).Methods("GET")
 	r.HandleFunc("/about/{id:[0-9]+}", handlers.PatchAbout(db)).Methods("PATCH")
 
 	return r

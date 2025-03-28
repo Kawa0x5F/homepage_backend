@@ -51,6 +51,7 @@ CREATE TABLE about (
     name VARCHAR(255) NOT NULL,
     roma VARCHAR(255),
     description TEXT,
+    color VARCHAR(255) NOT NULL,
     image_url VARCHAR(2083),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
