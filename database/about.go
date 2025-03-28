@@ -46,7 +46,7 @@ func SeedAbout(db *sql.DB) error {
 
 		query := `
 			INSERT INTO about (name, roma, description, color, image_url, created_at, updated_at)
-			VALUES ($1, $2, $3, $4, NOW(), NOW())
+			VALUES ($1, $2, $3, $4, $5, NOW(), NOW())
 		`
 
 		for _, data := range defaultData {
