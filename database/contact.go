@@ -48,7 +48,7 @@ func GetContactByID(db *sql.DB, id int) (*models.Contact, error) {
 	WHERE id = $1
 	`
 
-	err := db.QueryRow(query, id).Scan(&contact.Name, &contact.Link, &contact.HasImage)
+	err := db.QueryRow(query, id).Scan(&contact.ID, &contact.Name, &contact.Link, &contact.HasImage)
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -84,7 +84,7 @@ func PatchContact(db *sql.DB, id int, contact models.Contact) (bool, error) {
 	SET name = $1, link = $2, has_image = $3, updated_at = NOW()
 	WHERE id = $4
 	`
-	result, err := db.Exec(query, contact.Name, contact.Link, contact.HasImage)
+	result, err := db.Exec(query, contact.Name, contact.Link, contact.HasImage, id)
 
 	if err != nil {
 		log.Println("プロフィールの更新に失敗しました:", err)
