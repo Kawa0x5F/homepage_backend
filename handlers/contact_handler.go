@@ -28,7 +28,7 @@ func CreateContact(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var contact models.Contact
 		if err := json.NewDecoder(r.Body).Decode(&contact); err != nil {
-			respondWithError(w, http.StatusBadRequest, "無効内リクエスト")
+			respondWithError(w, http.StatusBadRequest, "無効なリクエスト")
 			return
 		}
 

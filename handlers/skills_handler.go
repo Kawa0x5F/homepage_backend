@@ -28,7 +28,7 @@ func CreateSkill(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var skill models.Skills
 		if err := json.NewDecoder(r.Body).Decode(&skill); err != nil {
-			respondWithError(w, http.StatusBadRequest, "無効内rクエスト")
+			respondWithError(w, http.StatusBadRequest, "無効なリクエスト")
 			return
 		}
 
