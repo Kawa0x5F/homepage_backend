@@ -57,13 +57,12 @@ CREATE TABLE about (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TYPE skill_type AS ENUM ('frontend', 'backend', 'devops', 'design');
+CREATE TYPE skill_type AS ENUM ('Language', 'FrameWorks', 'Tools');
 
 CREATE TABLE skills (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     type VARCHAR(255) NOT NULL,
-    description TEXT,
     hasImage BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
