@@ -34,5 +34,13 @@ func NewRouter(db *sql.DB) *mux.Router {
 	r.HandleFunc("/about/{id:[0-9]+}", handlers.GetAboutByID(db)).Methods("GET")
 	r.HandleFunc("/about/{id:[0-9]+}", handlers.PatchAbout(db)).Methods("PATCH")
 
+	r.HandleFunc("/skills/", handlers.GetAllSkills(db)).Methods("GET")
+	r.HandleFunc("/skills/", handlers.CreateSkill(db)).Methods("POST")
+	r.HandleFunc("/skills/{id:[0-9]+}", handlers.DeleteSkillByID(db)).Methods("DELETE")
+
+	r.HandleFunc("/contact/", handlers.GetAllContact(db)).Methods("GET")
+	r.HandleFunc("/contact/", handlers.CreateContact(db)).Methods("POST")
+	r.HandleFunc("/contact/{id:[0-9]+}", handlers.DeleteContactByID(db)).Methods("DELETE")
+
 	return r
 }
