@@ -40,7 +40,7 @@ func GetContactByID(db *sql.DB) http.HandlerFunc {
 			return
 		}
 		if contact == nil {
-			respondWithError(w, http.StatusNotFound, "About not found")
+			respondWithError(w, http.StatusNotFound, "Contact not found")
 			return
 		}
 		respondWithJSON(w, http.StatusOK, contact)

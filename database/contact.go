@@ -55,7 +55,7 @@ func GetContactByID(db *sql.DB, id int) (*models.Contact, error) {
 			log.Println("IDのデータが見つかりません：", id)
 			return nil, nil
 		}
-		log.Println("Aboutデータの取得に失敗しました：", err)
+		log.Println("Contactデータの取得に失敗しました：", err)
 		return nil, err
 	}
 
