@@ -48,7 +48,7 @@ func GetContactByID(db *sql.DB, id int) (*models.Contact, error) {
 	WHERE id = $1
 	`
 
-	err := db.QueryRow(query, id).Scan(&contact.ID, &contact.Link, &contact.HasImage)
+	err := db.QueryRow(query, id).Scan(&contact.Name, &contact.Link, &contact.HasImage)
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
