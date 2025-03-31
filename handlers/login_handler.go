@@ -56,7 +56,7 @@ func LoginHandler() http.HandlerFunc {
 			Path:     "/",
 			HttpOnly: true,
 			Secure:   true,
-			SameSite: http.SameSiteLaxMode,
+			SameSite: http.SameSiteNoneMode,
 			Expires:  time.Now().Add(1 * time.Hour),
 		})
 
