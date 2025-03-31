@@ -10,7 +10,7 @@ import (
 // 作品の一覧をDBから取得する
 func GetAllProduct(db *sql.DB) ([]models.Product, error) {
 	query := `
-	SELECT id, title, description, image_url, github, blog, updated_at
+	SELECT id, title, description, image_url, github, blog, created_at, updated_at
 	FROM product
 	`
 
@@ -24,7 +24,7 @@ func GetAllProduct(db *sql.DB) ([]models.Product, error) {
 
 	for rows.Next() {
 		var product models.Product
-		err := rows.Scan(&product.ID, &product.Title, &product.Description, &product.ImageURL, &product.Github, &product.Blog, &product.UpdatedAt)
+		err := rows.Scan(&product.ID, &product.Title, &product.Description, &product.ImageURL, &product.Github, &product.Blog, &product.CreatedAt, &product.UpdatedAt)
 		if err != nil {
 			return nil, err
 		}
