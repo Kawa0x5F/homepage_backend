@@ -2,7 +2,6 @@ package database
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"os"
 
@@ -11,16 +10,8 @@ import (
 
 // DB接続の初期化
 func InitDB() (*sql.DB, error) {
-	// 環境変数から接続情報を取得
-	dbHost := os.Getenv("DB_HOST")
-	dbUser := os.Getenv("DB_USER")
-	dbPassword := os.Getenv("DB_PASSWORD")
-	dbName := os.Getenv("DB_NAME")
-	dbPort := os.Getenv("DB_PORT")
-
-	// PostgreSQL の接続文字列
-	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-		dbHost, dbPort, dbUser, dbPassword, dbName)
+	// DBに接続するためのURL
+	connStr := os.Getenv("DATABASE_URL")
 
 	// DBに接続
 	db, err := sql.Open("postgres", connStr)
