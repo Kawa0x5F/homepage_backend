@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS articles_tags (
 
 -- 更新時に `updated_at` を自動更新する関数
 DROP TRIGGER IF EXISTS trigger_update_articles ON articles;
+DROP TRIGGER IF EXISTS trigger_update_about ON about;
 
 DROP FUNCTION IF EXISTS update_modified_column;
 
