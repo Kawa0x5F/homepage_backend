@@ -30,6 +30,8 @@ CREATE TABLE IF NOT EXISTS articles_tags (
 );
 
 -- 更新時に `updated_at` を自動更新する関数
+DROP TRIGGER IF EXISTS trigger_update_articles ON articles;
+
 DROP FUNCTION IF EXISTS update_modified_column;
 
 CREATE FUNCTION update_modified_column()
@@ -41,7 +43,6 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- `articles` テーブルの更新時に `update_modified_column` を実行するトリガー
-DROP TRIGGER IF EXISTS trigger_update_articles ON articles;
 
 CREATE TRIGGER trigger_update_articles
 BEFORE UPDATE ON articles
