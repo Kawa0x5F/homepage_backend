@@ -35,7 +35,7 @@ func main() {
 
 	// CORSの設定を適用
 	corsOptions := handlers.CORS(
-		handlers.AllowedOrigins([]string{"http://kawa0x5f.com/"}),                             // 許可するオリジン
+		handlers.AllowedOrigins([]string{"https://kawa0x5f.com/"}),                            // 許可するオリジン
 		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"}), // 許可するHTTPメソッド
 		handlers.AllowedHeaders([]string{"Content-Type", "Authorization"}),                    // 許可するヘッダー
 		handlers.AllowCredentials(),
