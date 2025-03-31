@@ -40,9 +40,9 @@ func main() {
 
 	// CORSの設定を適用
 	corsOptions := handlers.CORS(
-		handlers.AllowedOrigins([]string{"https://kawa0x5f.com/"}),                            // 許可するオリジン
-		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"}), // 許可するHTTPメソッド
-		handlers.AllowedHeaders([]string{"Content-Type", "Authorization"}),                    // 許可するヘッダー
+		handlers.AllowedOrigins([]string{"https://kawa0x5f.com/", "https://www.kawa0x5f.com/", "https://2c146c48.homepage-dp7.pages.dev/"}), // 許可するオリジン
+		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"}),                                               // 許可するHTTPメソッド
+		handlers.AllowedHeaders([]string{"Content-Type", "Authorization"}),                                                                  // 許可するヘッダー
 		handlers.AllowCredentials(),
 	)
 
