@@ -55,7 +55,7 @@ func LoginHandler() http.HandlerFunc {
 			Value:    token,
 			Path:     "/",
 			HttpOnly: true,
-			Secure:   false, // 本番環境では true にする
+			Secure:   true,
 			SameSite: http.SameSiteLaxMode,
 			Expires:  time.Now().Add(1 * time.Hour),
 		})
