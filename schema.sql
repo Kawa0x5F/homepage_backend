@@ -1,6 +1,6 @@
 -- ブログ用のテーブル
 
-CREATE TABLE articles (
+CREATE TABLE articles IF NOT EXISTS articles (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     slug VARCHAR(255) NOT NULL UNIQUE,
@@ -14,13 +14,13 @@ CREATE TABLE articles (
 CREATE INDEX idx_articles_slug ON articles(slug);
 
 
-CREATE TABLE tags (
+CREATE TABLE tags IF NOT EXISTS tags (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) UNIQUE NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE articles_tags (
+CREATE TABLE articles_tags IF NOT EXISTS articles_tags (
     article_id INT NOT NULL,
     tag_id INT NOT NULL,
     PRIMARY KEY (article_id, tag_id),
@@ -46,7 +46,7 @@ EXECUTE FUNCTION update_modified_column();
 
 -- 自己紹介用のテーブル
 
-CREATE TABLE about (
+CREATE TABLE about IF NOT EXISTS about (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     roma VARCHAR(255),
@@ -59,7 +59,7 @@ CREATE TABLE about (
 
 CREATE TYPE skill_type AS ENUM ('Language', 'FrameWorks', 'Tools');
 
-CREATE TABLE skills (
+CREATE TABLE skills IF NOT EXISTS skills (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     type VARCHAR(255) NOT NULL,
@@ -67,7 +67,7 @@ CREATE TABLE skills (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE contact (
+CREATE TABLE contact IF NOT EXISTS contact (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     link VARCHAR(2083) NOT NULL,
@@ -83,7 +83,7 @@ EXECUTE FUNCTION update_modified_column();
 
 -- プロダクト紹介用のテーブル
 
-CREATE TABLE product (
+CREATE TABLE product IF NOT EXISTS product (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     description TEXT NOT NULL,
