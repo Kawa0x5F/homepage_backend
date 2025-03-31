@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS articles (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX idx_articles_slug ON articles(slug);
+CREATE INDEX IF NOT EXISTS idx_articles_slug ON articles(slug);
 
 
 CREATE TABLE IF NOT EXISTS tags (
@@ -30,7 +30,9 @@ CREATE TABLE IF NOT EXISTS articles_tags (
 );
 
 -- 更新時に `updated_at` を自動更新する関数
-CREATE OR REPLACE FUNCTION update_modified_column()
+DROP FUNCTION IF EXISTS update_modified_column;
+
+CREATE FUNCTION update_modified_column()
 RETURNS TRIGGER AS $$
 BEGIN
     NEW.updated_at = CURRENT_TIMESTAMP;
@@ -39,6 +41,8 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- `articles` テーブルの更新時に `update_modified_column` を実行するトリガー
+DROP TRIGGER IF EXISTS trigger_update_articles ON articles;
+
 CREATE TRIGGER trigger_update_articles
 BEFORE UPDATE ON articles
 FOR EACH ROW
@@ -56,6 +60,8 @@ CREATE TABLE IF NOT EXISTS about (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+DROP TYPE IF EXISTS skill_type;
 
 CREATE TYPE skill_type AS ENUM ('Language', 'FrameWorks', 'Tools');
 
