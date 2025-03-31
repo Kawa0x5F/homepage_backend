@@ -28,10 +28,10 @@ func main() {
 	}
 	defer db.Close()
 
-	// schemaFilePath := "./schema.sql"
-	// if err := database.ApplySchema(db, schemaFilePath); err != nil {
-	// 	log.Fatalf("Failed to apply schema: %v", err)
-	// }
+	schemaFilePath := "./schema.sql"
+	if err := database.ApplySchema(db, schemaFilePath); err != nil {
+		log.Fatalf("Failed to apply schema: %v", err)
+	}
 
 	database.SeedAbout(db)
 
