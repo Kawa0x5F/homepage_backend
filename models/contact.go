@@ -9,4 +9,5 @@ type Contact struct {
 	Link      string    `json:"link"`
 	HasImage  bool      `json:"has_image"`
 	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }

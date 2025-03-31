@@ -51,19 +51,19 @@ CREATE TABLE about (
     name VARCHAR(255) NOT NULL,
     roma VARCHAR(255),
     description TEXT,
+    color VARCHAR(255) NOT NULL,
     image_url VARCHAR(2083),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TYPE skill_type AS ENUM ('frontend', 'backend', 'devops', 'design');
+CREATE TYPE skill_type AS ENUM ('Language', 'FrameWorks', 'Tools');
 
 CREATE TABLE skills (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     type VARCHAR(255) NOT NULL,
-    description TEXT,
-    hasImage BOOLEAN DEFAULT FALSE,
+    has_image BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -71,8 +71,9 @@ CREATE TABLE contact (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     link VARCHAR(2083) NOT NULL,
-    hasImage BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    has_image BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TRIGGER trigger_update_about
@@ -80,3 +81,15 @@ BEFORE UPDATE ON about
 FOR EACH ROW
 EXECUTE FUNCTION update_modified_column();
 
+-- プロダクト紹介用のテーブル
+
+CREATE TABLE product (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    image_url VARCHAR(2083),
+    github VARCHAR(2083),
+    blog VARCHAR(2083),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

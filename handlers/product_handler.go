@@ -12,20 +12,20 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// 全コンタクトデータを取得するハンドラー
-func GetAllContact(db *sql.DB) http.HandlerFunc {
+// 全作品情報を取得するハンドラー
+func GetAllProduct(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		contacts, err := database.GetAllContact(db)
+		products, err := database.GetAllProduct(db)
 		if err != nil {
 			respondWithError(w, http.StatusInternalServerError, "データベースエラー")
 			return
 		}
-		respondWithJSON(w, http.StatusOK, contacts)
+		respondWithJSON(w, http.StatusOK, products)
 	}
 }
 
-// コンタクトを取得
-func GetContactByID(db *sql.DB) http.HandlerFunc {
+// 作品情報を取得
+func GetProductByID(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		id, err := strconv.Atoi(vars["id"])
@@ -34,39 +34,39 @@ func GetContactByID(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		contact, err := database.GetContactByID(db, id)
+		product, err := database.GetProductByID(db, id)
 		if err != nil {
 			respondWithError(w, http.StatusInternalServerError, "データベースエラー")
 			return
 		}
-		if contact == nil {
-			respondWithError(w, http.StatusNotFound, "Contact not found")
+		if product == nil {
+			respondWithError(w, http.StatusNotFound, "Product not found")
 			return
 		}
-		respondWithJSON(w, http.StatusOK, contact)
+		respondWithJSON(w, http.StatusOK, product)
 	}
 }
 
-// コンタクトを追加するハンドラー
-func CreateContact(db *sql.DB) http.HandlerFunc {
+// 情報を追加するハンドラー
+func CreateProduct(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var contact models.Contact
-		if err := json.NewDecoder(r.Body).Decode(&contact); err != nil {
+		var product models.Product
+		if err := json.NewDecoder(r.Body).Decode(&product); err != nil {
 			respondWithError(w, http.StatusBadRequest, "無効なリクエスト")
 			return
 		}
 
-		if err := database.InsertContact(db, &contact); err != nil {
+		if err := database.InsertProduct(db, &product); err != nil {
 			respondWithError(w, http.StatusInternalServerError, "データベースエラー")
 			return
 		}
 
-		respondWithJSON(w, http.StatusCreated, contact)
+		respondWithJSON(w, http.StatusCreated, product)
 	}
 }
 
 // コンタクトを更新
-func PatchContact(db *sql.DB) http.HandlerFunc {
+func PatchProduct(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		id, err := strconv.Atoi(vars["id"])
@@ -75,7 +75,7 @@ func PatchContact(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		var req models.Contact
+		var req models.Product
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			log.Println("JSONデコードエラー:", err)
 			respondWithError(w, http.StatusBadRequest, "無効なリクエスト: JSONの形式が正しくありません")
@@ -83,29 +83,29 @@ func PatchContact(db *sql.DB) http.HandlerFunc {
 		}
 
 		// 名前とリンクが空でないかチェック
-		if req.Name == "" || req.Link == "" {
-			respondWithError(w, http.StatusBadRequest, "名前もしくはリンクが空です")
+		if req.Title == "" || req.Description == "" {
+			respondWithError(w, http.StatusBadRequest, "名前もしくは説明が空です")
 			return
 		}
 
 		// データベースを更新
-		updated, err := database.PatchContact(db, id, req)
+		updated, err := database.PatchProduct(db, id, req)
 		if err != nil {
 			respondWithError(w, http.StatusInternalServerError, "データベースエラー")
 			return
 		}
 
 		if !updated {
-			respondWithError(w, http.StatusNotFound, "About not found")
+			respondWithError(w, http.StatusNotFound, "Product not found")
 			return
 		}
 
-		respondWithJSON(w, http.StatusOK, map[string]string{"message": "About update"})
+		respondWithJSON(w, http.StatusOK, map[string]string{"message": "Product update"})
 	}
 }
 
-// コンタクトを削除するハンドラー
-func DeleteContactByID(db *sql.DB) http.HandlerFunc {
+// 作品情報を削除するハンドラー
+func DeleteProductByID(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		id, err := strconv.Atoi(vars["id"])
@@ -114,16 +114,16 @@ func DeleteContactByID(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		deleted, err := database.DeleteContactByID(db, id)
+		deleted, err := database.DeleteProductByID(db, id)
 		if err != nil {
 			respondWithError(w, http.StatusInternalServerError, "データベースエラー")
 			return
 		}
 
 		if !deleted {
-			respondWithError(w, http.StatusNotFound, "指定されたコンタクトがありませんでした")
+			respondWithError(w, http.StatusNotFound, "指定された作品がありませんでした")
 		}
 
-		respondWithJSON(w, http.StatusOK, map[string]string{"message": "Contact deleted"})
+		respondWithJSON(w, http.StatusOK, map[string]string{"message": "Product deleted"})
 	}
 }

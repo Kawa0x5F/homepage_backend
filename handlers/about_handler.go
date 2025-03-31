@@ -69,8 +69,20 @@ func PatchAbout(db *sql.DB) http.HandlerFunc {
 	}
 }
 
+// 全プロフィールを取得
+func GetAllAbout(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		abouts, err := database.GetAllAbout(db)
+		if err != nil {
+			respondWithError(w, http.StatusInternalServerError, "データベースエラー")
+			return
+		}
+		respondWithJSON(w, http.StatusOK, abouts)
+	}
+}
+
 // プロフィールを取得
-func GetAbout(db *sql.DB) http.HandlerFunc {
+func GetAboutByID(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		id, err := strconv.Atoi(vars["id"])
