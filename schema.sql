@@ -81,3 +81,15 @@ BEFORE UPDATE ON about
 FOR EACH ROW
 EXECUTE FUNCTION update_modified_column();
 
+-- プロダクト紹介用のテーブル
+
+CREATE TABLE product (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    image_url VARCHAR(2083),
+    github VARCHAR(2083),
+    blog VARCHAR(2083),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
