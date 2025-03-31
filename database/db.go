@@ -3,7 +3,6 @@ package database
 import (
 	"database/sql"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 
@@ -12,9 +11,18 @@ import (
 
 // DB接続の初期化
 func InitDB() (*sql.DB, error) {
-	// DBに接続するためのURL
-	connStr := os.Getenv("DATABASE_URL")
 
+	// 環境変数から接続情報を取得
+	dbHost := os.Getenv("DB_HOST")
+	dbUser := os.Getenv("DB_USER")
+	dbPassword := os.Getenv("DB_PASSWORD")
+	dbName := os.Getenv("DB_NAME")
+	dbPort := os.Getenv("DB_PORT")
+
+	// PostgreSQL の接続文字列
+	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+
+		dbHost, dbPort, dbUser, dbPassword, dbName)
 	// DBに接続
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
@@ -32,20 +40,20 @@ func InitDB() (*sql.DB, error) {
 	return db, nil
 }
 
-// SQLファイルを読み込んで初期化する
-func ApplySchema(db *sql.DB, schemaFilePath string) error {
-	// schema.sql ファイルの読み込み
-	schema, err := ioutil.ReadFile(schemaFilePath)
-	if err != nil {
-		return fmt.Errorf("failed to read schema file: %v", err)
-	}
+// // SQLファイルを読み込んで初期化する
+// func ApplySchema(db *sql.DB, schemaFilePath string) error {
+// 	// schema.sql ファイルの読み込み
+// 	schema, err := ioutil.ReadFile(schemaFilePath)
+// 	if err != nil {
+// 		return fmt.Errorf("failed to read schema file: %v", err)
+// 	}
 
-	// SQL ステートメントを実行
-	_, err = db.Exec(string(schema))
-	if err != nil {
-		return fmt.Errorf("failed to apply schema: %v", err)
-	}
+// 	// SQL ステートメントを実行
+// 	_, err = db.Exec(string(schema))
+// 	if err != nil {
+// 		return fmt.Errorf("failed to apply schema: %v", err)
+// 	}
 
-	log.Println("Schema applied successfully")
-	return nil
-}
+// 	log.Println("Schema applied successfully")
+// 	return nil
+// }
