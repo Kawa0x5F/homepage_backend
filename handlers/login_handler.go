@@ -54,7 +54,6 @@ func LoginHandler() http.HandlerFunc {
 			Name:        "admin_token",
 			Value:       token,
 			Path:        "/",
-			Domain:      ".kawa0x5f.com",
 			HttpOnly:    true,
 			Secure:      true,
 			SameSite:    http.SameSiteNoneMode,
@@ -73,14 +72,14 @@ func AuthCheckHandler() http.HandlerFunc {
 		cookie, err := r.Cookie("admin_token")
 		if err != nil {
 			// Cookieがない場合は認証エラー
-			writeJSONResponse(w, http.StatusUnauthorized, ErrorResponse{Error: "Unauthorized"})
+			writeJSONResponse(w, http.StatusUnauthorized, ErrorResponse{Error: "Unauthorized No Cookie"})
 			return
 		}
 
 		// トークンの検証
 		if !utils.ValidateToken(cookie.Value) {
 			// トークンが無効な場合
-			writeJSONResponse(w, http.StatusUnauthorized, ErrorResponse{Error: "Unauthorized"})
+			writeJSONResponse(w, http.StatusUnauthorized, ErrorResponse{Error: "Unauthorized token"})
 			return
 		}
 
