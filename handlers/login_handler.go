@@ -54,11 +54,12 @@ func LoginHandler() http.HandlerFunc {
 			Name:        "admin_token",
 			Value:       token,
 			Path:        "/",
+			Domain:      ".kawa0x5f.com",
 			HttpOnly:    true,
 			Secure:      true,
 			SameSite:    http.SameSiteNoneMode,
 			Expires:     time.Now().Add(1 * time.Hour),
-			Partitioned: false,
+			Partitioned: true,
 		})
 
 		writeJSONResponse(w, http.StatusOK, map[string]string{"result": "success"})
