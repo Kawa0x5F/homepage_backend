@@ -58,7 +58,7 @@ func LoginHandler() http.HandlerFunc {
 			Secure:      true,
 			SameSite:    http.SameSiteNoneMode,
 			Expires:     time.Now().Add(1 * time.Hour),
-			Partitioned: true,
+			Partitioned: false,
 		})
 
 		writeJSONResponse(w, http.StatusOK, map[string]string{"result": "success"})
