@@ -51,13 +51,14 @@ func LoginHandler() http.HandlerFunc {
 
 		// Cookie に保存
 		http.SetCookie(w, &http.Cookie{
-			Name:     "admin_token",
-			Value:    token,
-			Path:     "/",
-			HttpOnly: true,
-			Secure:   true,
-			SameSite: http.SameSiteNoneMode,
-			Expires:  time.Now().Add(1 * time.Hour),
+			Name:        "admin_token",
+			Value:       token,
+			Path:        "/",
+			HttpOnly:    true,
+			Secure:      true,
+			SameSite:    http.SameSiteNoneMode,
+			Expires:     time.Now().Add(1 * time.Hour),
+			Partitioned: true,
 		})
 
 		writeJSONResponse(w, http.StatusOK, map[string]string{"result": "success"})
